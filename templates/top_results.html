@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<p>
+    <form method="get" action="/search">
+        <input type="text" name="q">
+        <input type="submit" value="search">
+    </form>
+</p>
+<ul>
+{%for a in artist_names%}
+    <li><a href="/artist/{{a}}">{{a}}</a></li>
+{%end%}
+</ul>
+</body>
+</html>

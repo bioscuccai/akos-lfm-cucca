@@ -1,0 +1,43 @@
+.tag-holder{
+	display: inline-block;
+	margin-top: 13px;
+}
+
+.tag{
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	color: white;
+	background-color: #6F4BFF;
+	font-family: Sans-Serif;
+	text-decoration: none;
+	border-radius: 4px;
+	margin: 15px;
+	margin-top: 30px;
+	box-sizing: border-box;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.search-tag{
+	text-align:center;
+}
+
+.site-header{
+	display: inline;
+}
+
+.tags-search-field{
+	width: 400px;
+}
+
+.adder{
+	background-color: white;
+	color: #6F4BFF;
+}
+
+.list-item{
+	width: 200px;
+	float: left;
+	display: inline-block;
+}

@@ -1,0 +1,9 @@
+<div ng-show="multiLoading">
+	Loading...<i class="fa fa-spinner fa-spin"></i>
+</div>
+<div ng-hide="multiLoading">
+	<section ng-repeat="a in artists | orderBy: 'name'">
+		<a href="#/artist/{{a.name}}"><h1>{{a.name}}</h1></a>
+		<p ng-bind-html="a.summary"></p>
+	</section>
+</div>

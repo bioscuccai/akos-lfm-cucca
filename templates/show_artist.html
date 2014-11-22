@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+name: {{artist['name']}}<br>
+name: {{artist['summary']}}<br>
+name: {{artist['content']}}<br>
+name: {{artist['url']}}<br>
+name: {{artist['picture']}}<br>
+tags:
+<ul>
+{%for t in artist['tags']%}
+    <li><a href="/search?q={{t}}">{{t}}</a></li>
+{%end%}
+</ul>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html ng-app="lfmmod">
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Last.fm tages cucc</title>
+	<link rel="stylesheet" href="style/pure-min.css">
+	<link rel="stylesheet" href="style/grids-responsive-min.css">
+	<link rel="stylesheet" href="style/lfmcucc.css">
+	<link rel="stylesheet" href="fontawesome/css/font-awesome.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div ng-controller="cont">
+	<div id="layout" class="pure-g">
+		<div class="pure-u-1">
+			<form class="pure-form search-tag">
+				<input type="text" placeholder="több,tag,egymással,vesszővel,elválasztva" class="tags-search-field" ng-model="tagsField">
+				<button class="pure-button" ng-click="multiSearch()"><i class="fa fa-search"></i></i></button>
+				<button class="pure-button" ng-click="deleteMulti()"><i class="fa fa-eraser"></i></i></button>
+			</form>
+		</div>
+		<div class="sidebar pure-u-1-4">
+			<div class="pure-menu pure-menu-open" style="width: 75%; margin-left: auto; margin-right: auto">
+				<a class="pure-menu-heading">Last.fm tag kereső</a>
+				<ul>
+					<li><a href="#/alltags">Tagek</a></li>
+					<li><a href="#/allartists">Előadók</a></li>
+					<li><a href="#/scheduler">Ütemező</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="content pure-u-3-4">
+			<!--<p>
+				<input type="text" ng-model="tag">
+				<button ng-click="searchTag()">Search tag</button>
+			</p>
+			<fieldset>
+				<legend>Tag</legend>
+				name: {{currentTag.name}}
+				<ul ng-repeat="a in currentTag.artists">
+					<li>{{a}}</li>
+				</ul>
+			</fieldset>
+			<p>
+				<input type="text" ng-model="artist">
+				<button ng-click="searchArtist()">Search artist</button>
+			</p>
+			<fieldset>
+				<legend>Artist</legend>
+				name: {{currentArtist.name}}
+				<ul ng-repeat="t in currentArtist.tags">
+					<li>{{t}}</li>
+				</ul>
+			</fieldset>-->
+			<div ng-view></div>
+			<!--
+			<a href="#artist/Oasis">artist</a>
+			<a href="#artist/Rammstein">artist</a>
+			<a href="#artist/b">artist</a>-->
+		</div>
+	</div>
+</div>
+<script src="script/angular.min.js" type="text/javascript"></script>
+<script src="script/angular-route.min.js" type="text/javascript"></script>
+<script src="script/angular-sanitize.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+	var lfmmod=angular.module("lfmmod", ['ngRoute', 'ngSanitize']);
+
+	lfmmod.config(['$routeProvider', function($routeProvider){
+		$routeProvider.
+			when("/artist/:name", {
+				templateUrl: "partials/artist.htm",
+				controller: "artist"
+			}).
+			when("/tag/:name", {
+				templateUrl: "partials/tag.htm",
+				controller: "tag"
+			}).
+			when("/alltags", {
+				templateUrl: "partials/alltags.htm",
+				controller: "allTags"
+			}).
+			when("/multi/:tags",{
+				templateUrl: "partials/artist_list.html",
+				controller: "multiTags"
+			}).
+			when("/allartists",{
+				templateUrl: "partials/allartists.html",
+				controller: "allArtists"
+			}).
+			when("/scheduler",{
+				templateUrl: "partials/scheduler.html",
+				controller: "scheduler"
+			});
+
+	}]);
+	lfmmod.controller('cont', function($scope, $http, $routeParams, $location){
+		$scope.pendingArtists=[];
+		$scope.tagsField="";
+
+		/*var artistWs=new WebSocket("ws://localhost:8000/ws_artist_queue");
+		artistWs.onmessage=function(e){
+			console.log(e.data);
+			var d=JSON.parse(e.data);
+			$scope.pendingArtists=d;
+			console.log($scope.pendingArtists);
+
+			var updateBar=function(){
+				$scope.pendingArtists=d;
+			}
+			if($scope.$$phase){
+				updateBar();
+			} else {
+				$scope.$apply(updateBar);
+			}
+		}*/
+/*
+		$scope.multiTags=function(){
+			var pr=$http.get("/multi_tag_json/?q="+$scope.tagsField);
+			pr.success(function(data, status, header, config){
+				$scope.artists=data;
+			});
+		}
+*/
+		$scope.searchArtist=function(){
+			var pr=$http.get("/artist_json/?q="+$scope.artist);
+			pr.success(function(data, status, header, config){
+				$scope.currentArtist=data;
+			});
+		}
+		$scope.searchTag=function(){
+			var pr=$http.get("/tag_json/?q="+$scope.tag);
+			pr.success(function(data, status, header, config){
+				$scope.currentTag=data;
+			});
+		};
+
+		$scope.multiSearch=function(){
+			//alert($scope.tagsField);
+			$location.path("/multi/"+$scope.tagsField);
+		}
+
+		$scope.deleteMulti=function(){
+			$scope.tagsField="";
+		}
+
+		$scope.tagBreadcrumbClick=function(tag){
+			if($scope.tagsField){
+				$scope.tagsField+=","+tag;
+			} else {
+				$scope.tagsField=tag;
+			}
+		}
+
+		$scope.tagLink=function(tag){
+			$scope.tagsField=tag;
+			$location.path("multi/"+tag);
+			//console.log("taglink");
+		}
+	});
+
+
+	lfmmod.controller('artist', function($scope, $location, $routeParams, $http){
+		$scope.artistLoading=true;
+		var pr=$http.get("/artist_json/?q="+$routeParams.name);
+		pr.success(function(data, status, header, config){
+			$scope.currentArtist=data;
+			$scope.artistLoading=false;
+		});
+
+	});
+	lfmmod.controller('tag', function($scope, $location, $routeParams, $http){
+		$scope.tagLoading=true;
+		var pr=$http.get("/tag_json/?q="+$routeParams.name);
+		pr.success(function(data, status, header, config){
+			//console.log(data);
+			$scope.currentTag=data;
+			$scope.tagLoading=false;
+		});
+	});
+
+	lfmmod.controller("allTags", function($scope, $location, $routeParams, $http){
+		$scope.tagsLoading=true;
+		var pr=$http.get("/tags_json/");
+		pr.success(function(data, status, header, config){
+			//console.log(data);
+			$scope.allTags=data;
+			$scope.tagsLoading=false;
+		});
+	});
+
+	lfmmod.controller("allArtists", function($scope, $location, $routeParams, $http){
+		$scope.artistsLoading=true;
+		var pr=$http.get("/artists_json/");
+		pr.success(function(data, status, header, config){
+			//console.log(data);
+			$scope.allArtists=data;
+			$scope.artistsLoading=false;
+		});
+	});
+
+	lfmmod.controller("multiTags", function($scope, $location, $routeParams, $http){
+		$scope.multiLoading=true;
+		var pr=$http.get("/multi_tag_json/?q="+$routeParams.tags);
+		pr.success(function(data, status, header, config){
+			$scope.artists=data;
+			$scope.multiLoading=false;
+		});
+	});
+
+	lfmmod.controller("scheduler", function($scope, $location, $routeParams, $http){
+		var artistWs=new WebSocket("ws://"+window.location.host+"/ws_artist_queue");
+		artistWs.onmessage=function(e){
+			//console.log(e.data);
+			var d=JSON.parse(e.data);
+			$scope.pendingArtists=d;
+			//console.log($scope.pendingArtists);
+
+			var updateBar=function(){
+				$scope.pendingArtists=d;
+			}
+			if($scope.$$phase){
+				updateBar();
+			} else {
+				$scope.$apply(updateBar);
+			}
+		}
+		$scope.$on("$destroy", function(){
+			artistWs.close();
+			//console.log("closing websocket");
+		});
+	});
+
+</script>
+</body>
+</html>

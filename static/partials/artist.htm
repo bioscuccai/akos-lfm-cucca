@@ -1,0 +1,13 @@
+<div ng-show="artistLoading">
+	Loading...<i class="fa fa-spinner fa-spin"></i>
+</div>
+<div ng-hide="artistLoading">
+	<p><h1>{{currentArtist.name}}</h1></p>
+	<p><strong ng-bind-html="currentArtist.summary"></strong></p>
+	<p ng-bind-html="currentArtist.content"></p>
+	<p>
+		<img ng-src="{{currentArtist.picture}}" alt="" class="pure-img" style="float: right"></p>
+	<span ng-repeat="t in currentArtist.tags">
+		<span class="tag-holder"><span class="tag" ng-click="tagLink(t)">{{t}}</span><span ng-click="tagBreadcrumbClick(t)"><i class="fa fa-plus"></i></span></span>
+	</span>
+</div>

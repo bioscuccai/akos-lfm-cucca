@@ -1,0 +1,11 @@
+<div ng-show="tagsLoading">
+	Loading...<i class="fa fa-spinner fa-spin"></i>
+</div>
+<div ng-hide="tagsLoading">
+	<div ng-repeat="t in allTags">
+		<p>
+			<h3><a href="" ng-click="tagLink(t.name)">{{t.name}}</a></h3>
+		</p>
+		<span ng-repeat="a in t.artists">{{a}}, </span>
+	</div>
+</div>
